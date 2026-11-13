@@ -41,13 +41,14 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force out | Out-Null
-          Copy-Item src-tauri/target/release/bundle/nsis/*.exe out/
-          Copy-Item src-tauri/target/release/night-heron.exe "out/夜鹭骑行-免安装版.exe"
+          # GitHub 下载页的文件名不支持中文，这里用英文名
+          Copy-Item src-tauri/target/release/bundle/nsis/*.exe out/NightHeron_1.0.0_Windows_setup.exe
+          Copy-Item src-tauri/target/release/night-heron.exe out/NightHeron_1.0.0_Windows_portable.exe
       - name: 收集 macOS 产物
         if: matrix.name == 'macos'
         run: |
           mkdir -p out
-          cp src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg out/
+          cp src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg out/NightHeron_1.0.0_macOS_universal.dmg
       - uses: actions/upload-artifact@v4
         with:
           name: night-heron-${{ matrix.name }}
@@ -66,14 +67,23 @@ jobs:
         with:
           path: out
           merge-multiple: true
+      - name: 清掉旧版里名字乱码的文件
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for a in "-.exe" "_1.0.0_x64-setup.exe"; do
+            gh release delete-asset v1.0.0 "$a" -y -R ${{ github.repository }} || true
+          done
       - name: 发布到 Releases（下载页）
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0
           name: 夜鹭骑行 桌面小窗版 v1.0.0
           body: |
-            - Windows：下载 `夜鹭骑行_1.0.0_x64-setup.exe` 安装，或者用 `夜鹭骑行-免安装版.exe` 直接运行。
-            - Mac：下载 `.dmg`，Intel 和 Apple 芯片都能用。
+            - Windows：下载 `NightHeron_1.0.0_Windows_setup.exe` 安装，或者下载 `NightHeron_1.0.0_Windows_portable.exe` 双击直接运行（免安装）。
+            - Mac：下载 `NightHeron_1.0.0_macOS_universal.dmg`，Intel 和 Apple 芯片都能用。
+            - 第一次打开时系统可能提醒“未知发布者”：Windows 点“更多信息 → 仍要运行”；Mac 到“系统设置 → 隐私与安全性”点“仍要打开”。
 
             © 2026 不明飞行鹭 · CC BY-NC-ND 4.0
           files: out/*
