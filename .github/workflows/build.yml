@@ -53,3 +53,26 @@ jobs:
           name: night-heron-${{ matrix.name }}
           path: out/*
           if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: 发布到 Releases（下载页）
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: 夜鹭骑行 桌面小窗版 v1.0.0
+          body: |
+            - Windows：下载 `夜鹭骑行_1.0.0_x64-setup.exe` 安装，或者用 `夜鹭骑行-免安装版.exe` 直接运行。
+            - Mac：下载 `.dmg`，Intel 和 Apple 芯片都能用。
+
+            © 2026 不明飞行鹭 · CC BY-NC-ND 4.0
+          files: out/*
+          overwrite_files: true
