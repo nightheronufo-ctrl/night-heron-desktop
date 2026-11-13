@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "小窗外壳需要的最少权限（事件监听）",
+  "windows": ["main"],
+  "permissions": ["core:default"]
+}

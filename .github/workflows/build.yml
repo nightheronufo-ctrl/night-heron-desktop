@@ -1,0 +1,55 @@
+name: 打包桌面版
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows
+            args: ""
+            targets: ""
+          - os: macos-latest
+            name: macos
+            args: "--target universal-apple-darwin"
+            targets: "aarch64-apple-darwin,x86_64-apple-darwin"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.targets }}
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+      - run: npm ci
+      - run: npm run prepare-game
+      - run: npx tauri build ${{ matrix.args }}
+
+      - name: 收集 Windows 产物
+        if: matrix.name == 'windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force out | Out-Null
+          Copy-Item src-tauri/target/release/bundle/nsis/*.exe out/
+          Copy-Item src-tauri/target/release/night-heron.exe "out/夜鹭骑行-免安装版.exe"
+      - name: 收集 macOS 产物
+        if: matrix.name == 'macos'
+        run: |
+          mkdir -p out
+          cp src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: night-heron-${{ matrix.name }}
+          path: out/*
+          if-no-files-found: error

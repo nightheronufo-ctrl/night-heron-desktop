@@ -1,0 +1,17 @@
+{
+  "name": "night-heron-desktop",
+  "private": true,
+  "version": "1.0.0",
+  "description": "夜鹭骑行 · 桌面小窗版",
+  "author": "不明飞行鹭",
+  "license": "CC-BY-NC-ND-4.0",
+  "scripts": {
+    "prepare-game": "node scripts/prepare.js",
+    "dev": "npm run prepare-game && tauri dev",
+    "build": "npm run prepare-game && tauri build",
+    "icons": "tauri icon app-icon.png"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "2.12.4"
+  }
+}

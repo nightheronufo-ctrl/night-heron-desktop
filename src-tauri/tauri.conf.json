@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "夜鹭骑行",
+  "mainBinaryName": "night-heron",
+  "version": "1.0.0",
+  "identifier": "com.nightheron.desktop",
+  "build": {
+    "frontendDist": "../dist",
+    "beforeBuildCommand": "",
+    "beforeDevCommand": ""
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "macOSPrivateApi": true,
+    "windows": [],
+    "security": { "csp": null }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "dmg", "app"],
+    "publisher": "不明飞行鹭",
+    "copyright": "© 2026 不明飞行鹭 · CC BY-NC-ND 4.0",
+    "category": "Game",
+    "shortDescription": "夜鹭骑行 · 桌面小窗版",
+    "longDescription": "一只夜鹭骑着自行车环游世界。由 不明飞行鹭 构思与设计，代码、美术与音效由 AI（Claude）生成。免费分享，禁止商业用途，CC BY-NC-ND 4.0。",
+    "license": "CC-BY-NC-ND-4.0",
+    "licenseFile": "../LICENSE",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "languages": ["SimpChinese", "English"],
+        "displayLanguageSelector": false,
+        "installMode": "currentUser"
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "signingIdentity": "-"
+    }
+  }
+}
